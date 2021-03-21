@@ -37,7 +37,7 @@ def get_idx_columns(columns):
     print(lst)
 
 
-# Загружаем датасет без 1-й строки и делаем переиндексацию с удалением столбца index
+# Загружаем датасет
 df = pd.read_csv('../data/wp_cn_requests_price.csv')
 # Удаляем дубликаты по id_session
 df = df.drop_duplicates(subset='id_session', keep="first")
