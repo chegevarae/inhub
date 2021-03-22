@@ -88,8 +88,8 @@ df.loc[df['crm_stranitsa_v_internete'].isnull(), 'crm_stranitsa_v_internete'] = 
 df.loc[df['crm_istochnik_trafika'].isnull(), 'crm_istochnik_trafika'] = 'undefined'
 
 # Получаем ClientID
-df['client_id'] = df['crm_dopolnitelno_ob_istochnike'].apply(lambda x: get_id(x) if 'YA' in x else 'undefined', 1)
-df.loc[(df['client_id'].isnull()) | (df['client_id'] == ''), 'client_id'] = 'undefined'
+df['crm_client_id'] = df['crm_dopolnitelno_ob_istochnike'].apply(lambda x: get_id(x) if 'YA' in x else 'undefined', 1)
+df.loc[(df['crm_client_id'].isnull()) | (df['crm_client_id'] == ''), 'crm_client_id'] = 'undefined'
 
 # Новый порядок столбцов
 new_order = [30, 0, 7, 1, 2, 3, 4, 5, 6, 13, 12, 8, 9, 10, 11, 14, 15, 28, 29, 25, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27]
