@@ -63,6 +63,9 @@ df.loc[df['st_id_ga'].isnull(), 'st_id_ga'] = 'undefined'
 df.loc[df['st_price'] == 'По запросу', 'st_price'] = 0
 df.loc[df['st_price'] == 0.0, 'st_price'] = df['st_price'].median()
 
+# Поиск и замена по регулярке
+df.loc[df['st_location'].str.contains(r"\\'"), 'st_location'] = df['st_location'].str.replace(r"\\'", "")
+
 # Заменим название направления типа "Другое" на название корневой отрасли
 df.loc[df['st_direction'] == 'Другое', 'st_direction'] = df['st_branch']
 
