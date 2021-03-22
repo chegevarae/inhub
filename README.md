@@ -13,4 +13,4 @@
 ## Обязательные требования
 - Python 3.7+  
 - Библиотеки Python: re, nampy, pandas, transliterate  
- 
+- Наличие данных для обработки
