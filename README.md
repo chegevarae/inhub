@@ -8,7 +8,7 @@
 - Получение информации о пользователе из Метрики по его ID <span style="color:blue">🛠</span>  
 - Предсказание вероятности покупки ПО при помощи модели бинарной классификации <span style="color:blue">🛠</span>  
 
-[Витрина данных](https://public.tableau.com/profile/chegevara#!/vizhome/Analytics_16164172063330/Dashboard-Industies "Готовые дашборды")  
+**Пример работы:** [Витрина данных →](https://public.tableau.com/profile/chegevara#!/vizhome/Analytics_16164172063330/Dashboard-Industies "Готовые дашборды")  
 
 [![mockup](images/mockup.png)](images/mockup.png)  
 
