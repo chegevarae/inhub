@@ -9,7 +9,7 @@
 - Предсказание вероятности покупки ПО при помощи модели бинарной классификации <span style="color:blue">🛠</span>  
 
 **Примеры работы:**  
-- Обработка csv файлов: [Витрина данных →](https://public.tableau.com/profile/chegevara#!/vizhome/Analytics_16164172063330/Dashboard-Industies "Готовые дашборды")  
+- Обработка csv файлов: [Витрина данных →](https://public.tableau.com/profile/chegevara#!/vizhome/Analytics_16164172063330/Industies-Dashboard)  
 
 [![mockup](images/mockup.png)](images/mockup.png)  
 

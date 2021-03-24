@@ -2,7 +2,7 @@
 
     "manifest_version": 1.0,
     "name": "INHUB - Аналитика",
-    "version": "1.0.1",
+    "version": "1.0.2",
   
     "default_locale": "ru",
     "description": "Программное обепечение для обработки данных"

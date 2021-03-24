@@ -51,11 +51,8 @@ df = pd.merge(df1, df2, how='outer')
 columns = ['Посетители']
 df = drop_columns(df, columns)
 
-# Удаление "лишних" пользователей
+# Сегментация пользователей
 df.loc[df['Дата визита'].isnull(), 'Дата визита'] = 'undefined'
-df = df[df['Дата визита'].str.contains('202.*')]
-df = df.loc[(df['Визиты'] <= 35) & (df['Достижения любой цели'] <= 100)]
-df = df.loc[(df['ClientID'] != '')]
 
 # Переименование столбцов
 df.columns = get_translite(df.columns)
@@ -68,10 +65,12 @@ df.loc[df['ym_pervaja_poiskovaja_sistema'] == 'Не определено', 'ym_p
 df.loc[df['ym_utm_source'] == 'Не определено', 'ym_utm_source'] = np.nan
 df.loc[df['ym_utm_content'] == 'Не определено', 'ym_utm_content'] = np.nan
 # ------
+df.loc[df['ym_gorod'].isnull(), 'ym_gorod'] = 'undefined'
 df.loc[df['ym_gorod'] == 'Не определено', 'ym_gorod'] = 'undefined'
 df.loc[df['ym_otkazy'].isnull(), 'ym_otkazy'] = df['ym_otkazy'].median()
 df.loc[df['ym_glubina_prosmotra'].isnull(), 'ym_glubina_prosmotra'] = df['ym_glubina_prosmotra'].median()
 df.loc[df['ym_vremja_na_sajte'].isnull(), 'ym_vremja_na_sajte'] = 'undefined'
+df.loc[df['ym_novye_posetiteli'].isnull(), 'ym_novye_posetiteli'] = 'undefined'
 df.loc[df['ym_dnej_mezhdu_vizitami'].isnull(), 'ym_dnej_mezhdu_vizitami'] = df['ym_dnej_mezhdu_vizitami'].median()
 df.loc[df['ym_vernuvshiesja_1_den'].isnull(), 'ym_vernuvshiesja_1_den'] = df['ym_vernuvshiesja_1_den'].median()
 df.loc[df['ym_vernuvshiesja_2_7_dnej'].isnull(), 'ym_vernuvshiesja_2_7_dnej'] = df['ym_vernuvshiesja_2_7_dnej'].median()
@@ -86,7 +85,6 @@ df.loc[df['ym_mobilnost'] == 0.0, 'ym_mobilnost'] = 0
 
 # Приведение типов
 df = astype_col(df, ['ym_vizity'], coltype='uint8')
-df = astype_col(df, ['ym_novye_posetiteli'], coltype='uint8')
 
 # Добавляем стоимость клика по каждому каналу
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Прямые заходы', 'ym_cost'] = 0
@@ -98,6 +96,8 @@ df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы из социал�
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы с почтовых рассылок', 'ym_cost'] = 2
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы из рекомендательных систем', 'ym_cost'] = 0
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы из мессенджеров', 'ym_cost'] = 0
+df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы с сохранённых страниц', 'ym_cost'] = 0
+df.loc[df['ym_pervyj_istochnik_trafika'].isnull(), 'ym_pervyj_istochnik_trafika'] = 'undefined'
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'undefined', 'ym_cost'] = 0
 
 # Переименовываем категории каналов
@@ -110,6 +110,7 @@ df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы из социал�
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы с почтовых рассылок', 'ym_pervyj_istochnik_trafika'] = 'Email'
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы из рекомендательных систем', 'ym_pervyj_istochnik_trafika'] = 'RecSys'
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы из мессенджеров', 'ym_pervyj_istochnik_trafika'] = 'Messenger'
+df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы с сохранённых страниц', 'ym_pervyj_istochnik_trafika'] = 'SavedPages'
 
 # Слияние столбцов
 df['ym_source'] = df[df.columns[2:6]].apply(lambda x: ' > '.join(x.dropna().astype(str)), axis=1)
