@@ -96,14 +96,10 @@ new_order = [30, 0, 7, 1, 2, 3, 4, 5, 6, 13, 12, 8, 9, 10, 11, 14, 15, 28, 29, 2
 df = df[df.columns[new_order]]
 
 # Приведение типов
-df = astype_col(df, ['crm_data_sozdanija'], coltype='datetime64')
 df = astype_col(df, ['crm_emkost_litsenzii'], coltype='uint8')
 
 # Удалим дубликаты по crm_id
 df = df.drop_duplicates(subset='crm_id', keep="first")
-
-# Скорректируем дату для более удобной группировки данных
-df['crm_data_sozdanija'] = pd.to_datetime(df['crm_data_sozdanija']).dt.strftime('%Y-%m-%d')
 
 # Сохраняем в файл
 df.to_csv('../data/td_crm.csv', index=False, encoding='utf-8', sep=';')

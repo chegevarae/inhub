@@ -71,12 +71,8 @@ df.loc[df['st_location'].str.contains(r"\\'"), 'st_location'] = df['st_location'
 df.loc[df['st_direction'] == 'Другое', 'st_direction'] = df['st_branch']
 
 # Приведение типов
-df = astype_col(df, ['st_created'], coltype='datetime64')
 df = astype_col(df, ['st_amount'], coltype='uint8')
 df = astype_col(df, ['st_price'], coltype='float64')
-
-# Скорректируем дату для более удобной группировки данных
-df['st_created'] = pd.to_datetime(df['st_created']).dt.strftime('%Y-%m-%d')
 
 # Сохраняем в файл
 df.to_csv('../data/td_site.csv', index=False, encoding='utf-8', sep=';')
