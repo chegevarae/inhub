@@ -1,3 +1,6 @@
 /data/
 /notebooks/.ipynb_checkpoints/
+/notebooks/__pycache__/
+/scr/.ipynb_checkpoints/
+/scr/__pycache__/
 config.py

@@ -5,36 +5,8 @@ import pandas as pd
 import re
 from transliterate import translit, get_available_language_codes
 
-# Функция приведения типов
-def astype_col(df, colgroup, coltype):
-    for colname in colgroup:
-        df[colname] = df[colname].astype(coltype)
-    return df
-
-# Функция удаления столбцов
-def drop_columns(df, columns):
-    for column in columns:
-        df = df.drop(column, axis=1)  
-    return df
-
-# Функция транслитерации
-def get_translite(columns):
-    lst = []
-    prefix = 'YM_'
-    for column in columns:
-        r = translit(prefix + column, 'ru', reversed=True).lower()
-        r = re.sub("\'|\(|\)|:", "", r)
-        r = re.sub("\ |-|‑", "_", r)
-        lst.append(r)
-    return lst
-
-# Функция получение имен столбцов с индексом
-def get_idx_columns(columns):
-    lst = []
-    for index, value in enumerate(columns):
-        print(index, value)
-        lst.append(index)
-    print(lst)
+# Функции для обработки данных
+import functions as fn
 
 
 # Загружаем датасеты без 1-й строки и делаем переиндексацию с удалением столбца index
@@ -49,13 +21,13 @@ df = pd.merge(df1, df2, how='outer')
 
 # Удаление ненужных данных
 columns = ['Посетители']
-df = drop_columns(df, columns)
+df = fn.drop_col(df, columns)
 
 # Сегментация пользователей
 df.loc[df['Дата визита'].isnull(), 'Дата визита'] = 'undefined'
 
 # Переименование столбцов
-df.columns = get_translite(df.columns)
+df.columns = fn.get_translite(df.columns, 'ym_')
 
 # Корректировка значений
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Не определено', 'ym_pervyj_istochnik_trafika'] = 'undefined'
@@ -84,7 +56,7 @@ df.loc[df['ym_mobilnost'] == 1.0, 'ym_mobilnost'] = 1
 df.loc[df['ym_mobilnost'] == 0.0, 'ym_mobilnost'] = 0
 
 # Приведение типов
-df = astype_col(df, ['ym_vizity'], coltype='uint8')
+df = fn.astype_col(df, ['ym_vizity'], coltype='uint8')
 
 # Добавляем стоимость клика по каждому каналу
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Прямые заходы', 'ym_cost'] = 0

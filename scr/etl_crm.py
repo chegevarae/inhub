@@ -5,41 +5,8 @@ import pandas as pd
 import re
 from transliterate import translit, get_available_language_codes
 
-# Функция приведения типов
-def astype_col(df, colgroup, coltype):
-    for colname in colgroup:
-        df[colname] = df[colname].astype(coltype)
-    return df
-
-# Функция получения ClientID
-def get_id(x):
-    id = re.search('YA:.*', x).group(0)
-    return re.sub('YA:', '', id).strip()
-
-# Функция удаления столбцов
-def drop_columns(df, columns):
-    for column in columns:
-        df = df.drop(column, axis=1)  
-    return df
-
-# Функция транслитерации
-def get_translite(columns):
-    lst = []
-    prefix = 'CRM_'
-    for column in columns:
-        r = translit(prefix + column, 'ru', reversed=True).lower()
-        r = re.sub("\'|\(|\)|:", "", r)
-        r = re.sub("\ |-|‑", "_", r)
-        lst.append(r)
-    return lst
-
-# Функция получение имен столбцов с индексом
-def get_idx_columns(columns):
-    lst = []
-    for index, value in enumerate(columns):
-        print(index, value)
-        lst.append(index)
-    print(lst)
+# Функции для обработки данных
+import functions as fn
 
 
 # Загружаем датасет
@@ -57,10 +24,10 @@ columns = ['Дата рождения', 'Рабочий телефон', 'Моб
            'Причина отказа сделки', 'Причина отказа сделки (список)', 'Проект', 'Конфигурация 1С', 'Наличие 1С', 
            'Причина отказа лида (список)', 'Партнерство', 'Подписан на рассылку', 'UF_CRM_TEXTAREA', 'UF_CRM_TRANID', 
            'UF_CRM_FORMNAME', 'UF_CRM_COOKIES', 'UF_CRM_VASHESOOBSCHE', 'Отправка списка компонентов']
-df = drop_columns(df, columns)
+df = fn.drop_col(df, columns)
 
 # Переименование столбцов
-df.columns = get_translite(df.columns)
+df.columns = fn.get_translite(df.columns, 'crm_')
 
 # Корректировка значений
 df.loc[df['crm_obraschenie'].isnull(), 'crm_obraschenie'] = 'undefined'
@@ -88,7 +55,7 @@ df.loc[df['crm_stranitsa_v_internete'].isnull(), 'crm_stranitsa_v_internete'] = 
 df.loc[df['crm_istochnik_trafika'].isnull(), 'crm_istochnik_trafika'] = 'undefined'
 
 # Получаем ClientID
-df['crm_client_id'] = df['crm_dopolnitelno_ob_istochnike'].apply(lambda x: get_id(x) if 'YA' in x else 'undefined', 1)
+df['crm_client_id'] = df['crm_dopolnitelno_ob_istochnike'].apply(lambda x: fn.get_id(x) if 'YA' in x else 'undefined', 1)
 df.loc[(df['crm_client_id'].isnull()) | (df['crm_client_id'] == ''), 'crm_client_id'] = 'undefined'
 
 # Новый порядок столбцов
@@ -96,7 +63,7 @@ new_order = [30, 0, 7, 1, 2, 3, 4, 5, 6, 13, 12, 8, 9, 10, 11, 14, 15, 28, 29, 2
 df = df[df.columns[new_order]]
 
 # Приведение типов
-df = astype_col(df, ['crm_emkost_litsenzii'], coltype='uint8')
+df = fn.astype_col(df, ['crm_emkost_litsenzii'], coltype='uint8')
 
 # Удалим дубликаты по crm_id
 df = df.drop_duplicates(subset='crm_id', keep="first")
