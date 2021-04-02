@@ -24,13 +24,13 @@
 
 ## Аналитика Tableau Desktop
 
-1. Скачиваем и устанавливаем [![Tableau Desktop](https://www.tableau.com/products/desktop/download)](https://www.tableau.com/products/desktop/download)  
+1. Скачиваем и устанавливаем [Tableau Desktop](https://www.tableau.com/products/desktop/download)  
 2. Получаем сырые данные из калькулятора, метрики и crm - перечень файлов см. в папке data  
 3. Обрабатываем .csv файлы etl-скриптами из папки scr:  
     - etl_crm.py  
     - etl_metrika.py  
     - etl_site.py  
-4. Скачиваем актуальный проект [![Analytics](https://public.tableau.com/profile/chegevara#!/vizhome/Analytics_16164172063330/Industies-Dashboard)](https://public.tableau.com/profile/chegevara#!/vizhome/Analytics_16164172063330/Industies-Dashboard)  
+4. Скачиваем актуальный проект [Analytics](https://public.tableau.com/profile/chegevara#!/vizhome/Analytics_16164172063330/Industies-Dashboard)  
 5. Открываем Analytics в Tableau Desktop и на витрину подаем .csv файлы:
     - td_crm.py  
     - td_metrika.py  
