@@ -5,8 +5,13 @@ import pandas as pd
 import re
 from transliterate import translit, get_available_language_codes
 
-# Функции для обработки данных
-import functions as fn
+# Библиотека для предобработки датасетов
+import os, sys
+module_path = os.path.abspath(os.path.join(os.pardir))
+if module_path not in sys.path:
+    sys.path.append(module_path)
+from data_preprocessing import DataPreprocessor
+dp = DataPreprocessor()
 
 
 # Загружаем датасеты без 1-й строки и делаем переиндексацию с удалением столбца index
@@ -17,17 +22,17 @@ df1 = df1.drop_duplicates(subset='ClientID', keep="first")
 df2 = df2.drop_duplicates(subset='ClientID', keep="first")
 
 # Производим слияние датасетов
-df = pd.merge(df1, df2, how='outer')
+df = pd.merge(df1, df2, how='left')
 
 # Удаление ненужных данных
 columns = ['Посетители']
-df = fn.drop_col(df, columns)
+df = dp.drop_col(df, columns)
 
 # Сегментация пользователей
 df.loc[df['Дата визита'].isnull(), 'Дата визита'] = 'undefined'
 
 # Переименование столбцов
-df.columns = fn.get_translite(df.columns, 'ym_')
+df.columns = dp.get_translite(df.columns, 'ym_')
 
 # Корректировка значений
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Не определено', 'ym_pervyj_istochnik_trafika'] = 'undefined'
@@ -56,7 +61,7 @@ df.loc[df['ym_mobilnost'] == 1.0, 'ym_mobilnost'] = 1
 df.loc[df['ym_mobilnost'] == 0.0, 'ym_mobilnost'] = 0
 
 # Приведение типов
-df = fn.astype_col(df, ['ym_vizity'], coltype='uint8')
+df = dp.astype_col(df, ['ym_vizity'], coltype='uint8')
 
 # Добавляем стоимость клика по каждому каналу
 df.loc[df['ym_pervyj_istochnik_trafika'] == 'Прямые заходы', 'ym_cost'] = 0
@@ -88,7 +93,7 @@ df.loc[df['ym_pervyj_istochnik_trafika'] == 'Переходы с сохранё�
 df['ym_source'] = df[df.columns[2:6]].apply(lambda x: ' > '.join(x.dropna().astype(str)), axis=1)
 
 # Новый порядок столбцов
-new_order = [0, 1, 23, 2, 3, 4, 5, 6, 22, 16, 17, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21]
+new_order = [0, 1, 23, 2, 3, 4, 5, 17, 6, 22, 16, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18, 19, 20, 21]
 df = df[df.columns[new_order]]
 
 # Корректировка значений
@@ -100,10 +105,11 @@ df.loc[df['ym_source'] == 'мобильные%сотрудники', 'ym_source'
 df.loc[df['ym_source'] == 'старт за 2 дня', 'ym_source'] = 'undefined'
 df.loc[df['ym_source'] == 'яндекс > serp', 'ym_source'] = 'yandex'
 # -------
+# Не удаляем, они нужны для ML - модели
 df.loc[df['ym_pervyj_perehod_s_sajtov'].isnull(), 'ym_pervyj_perehod_s_sajtov'] = 'undefined'
 df.loc[df['ym_pervaja_poiskovaja_sistema'].isnull(), 'ym_pervaja_poiskovaja_sistema'] = 'undefined'
 df.loc[df['ym_utm_source'].isnull(), 'ym_utm_source'] = 'undefined'
 df.loc[df['ym_utm_content'].isnull(), 'ym_utm_content'] = 'undefined'
 
-# Сохраняем в файл
+# Сохранение в файл
 df.to_csv('../data/td_metrika.csv', index=False, encoding='utf-8', sep=';')

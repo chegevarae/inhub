@@ -5,11 +5,21 @@ import pandas as pd
 import re
 from transliterate import translit, get_available_language_codes
 
-# Функции для обработки данных
-import functions as fn
+# Библиотека для предобработки датасетов
+import os, sys
+module_path = os.path.abspath(os.path.join(os.pardir))
+if module_path not in sys.path:
+    sys.path.append(module_path)
+from data_preprocessing import DataPreprocessor
+dp = DataPreprocessor()
+
+# Получение ClientID
+def get_id(x):
+    id = re.search('YA:.*', x).group(0)
+    return re.sub('YA:', '', id).strip()
 
 
-# Загружаем датасет
+# Загрузка датасета
 df = pd.read_csv('../data/LEAD.csv', encoding='cp1251', sep=';')
 
 # Удаление ненужных данных
@@ -24,10 +34,10 @@ columns = ['Дата рождения', 'Рабочий телефон', 'Моб
            'Причина отказа сделки', 'Причина отказа сделки (список)', 'Проект', 'Конфигурация 1С', 'Наличие 1С', 
            'Причина отказа лида (список)', 'Партнерство', 'Подписан на рассылку', 'UF_CRM_TEXTAREA', 'UF_CRM_TRANID', 
            'UF_CRM_FORMNAME', 'UF_CRM_COOKIES', 'UF_CRM_VASHESOOBSCHE', 'Отправка списка компонентов']
-df = fn.drop_col(df, columns)
+df = dp.drop_col(df, columns)
 
 # Переименование столбцов
-df.columns = fn.get_translite(df.columns, 'crm_')
+df.columns = dp.get_translite(df.columns, 'crm_')
 
 # Корректировка значений
 df.loc[df['crm_obraschenie'].isnull(), 'crm_obraschenie'] = 'undefined'
@@ -55,7 +65,7 @@ df.loc[df['crm_stranitsa_v_internete'].isnull(), 'crm_stranitsa_v_internete'] = 
 df.loc[df['crm_istochnik_trafika'].isnull(), 'crm_istochnik_trafika'] = 'undefined'
 
 # Получаем ClientID
-df['crm_client_id'] = df['crm_dopolnitelno_ob_istochnike'].apply(lambda x: fn.get_id(x) if 'YA' in x else 'undefined', 1)
+df['crm_client_id'] = df['crm_dopolnitelno_ob_istochnike'].apply(lambda x: get_id(x) if 'YA' in x else 'undefined', 1)
 df.loc[(df['crm_client_id'].isnull()) | (df['crm_client_id'] == ''), 'crm_client_id'] = 'undefined'
 
 # Новый порядок столбцов
@@ -63,10 +73,10 @@ new_order = [30, 0, 7, 1, 2, 3, 4, 5, 6, 13, 12, 8, 9, 10, 11, 14, 15, 28, 29, 2
 df = df[df.columns[new_order]]
 
 # Приведение типов
-df = fn.astype_col(df, ['crm_emkost_litsenzii'], coltype='uint8')
+df = dp.astype_col(df, ['crm_emkost_litsenzii'], coltype='uint8')
 
-# Удалим дубликаты по crm_id
+# Удаление дубликатов по crm_id
 df = df.drop_duplicates(subset='crm_id', keep="first")
 
-# Сохраняем в файл
+# Сохранение в файл
 df.to_csv('../data/td_crm.csv', index=False, encoding='utf-8', sep=';')

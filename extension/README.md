@@ -1,8 +1,15 @@
 # Changelog
 
+## Version 1.2.0 - 02.04.2021
+
+→ Изменена структура проекта  
+→ Файл functions.py заменен на библиотеку data_preprocessing.py  
+→ Added README.md for Data  
+→ Обновлена документация  
+
 ## Version 1.1.0 - 31.03.2021
 
-→ Changed project structure  
+→ Изменена структура проекта  
 → Added functions.py  
 → Added main.py  
 → Added Changelog.md  

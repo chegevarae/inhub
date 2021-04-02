@@ -5,24 +5,30 @@ import pandas as pd
 import re
 from transliterate import translit, get_available_language_codes
 
-# Функции для обработки данных
-import functions as fn
+# Библиотека для предобработки датасетов
+import os, sys
+module_path = os.path.abspath(os.path.join(os.pardir))
+if module_path not in sys.path:
+    sys.path.append(module_path)
+from data_preprocessing import DataPreprocessor
+dp = DataPreprocessor()
 
 
 # Загружаем датасет
 df = pd.read_csv('../data/wp_cn_requests_price.csv')
-# Удаляем дубликаты по id_session
+# Удаляем дубликаты
 df = df.drop_duplicates(subset='id_session', keep="first")
+df = df.drop_duplicates(subset='id_YM', keep="first")
 
 # Удаление ненужных данных
 columns = ['id', 'id_session']
-df = fn.drop_col(df, columns)
+df = dp.drop_col(df, columns)
 
 # Убираем 2020 год (там одни тесты)
 df = df[df['created'].str.contains('2021.*')]
 
 # Переименование столбцов
-df.columns = fn.get_translite(df.columns, 'st_')
+df.columns = dp.get_translite(df.columns, 'st_')
 
 # Обработка выбросов
 df.loc[df['st_amount'] > 2000, 'st_amount'] = df['st_amount'].median()
@@ -43,8 +49,8 @@ df.loc[df['st_location'].str.contains(r"\\'"), 'st_location'] = df['st_location'
 df.loc[df['st_direction'] == 'Другое', 'st_direction'] = df['st_branch']
 
 # Приведение типов
-df = fn.astype_col(df, ['st_amount'], coltype='uint8')
-df = fn.astype_col(df, ['st_price'], coltype='float64')
+df = dp.astype_col(df, ['st_amount'], coltype='uint8')
+df = dp.astype_col(df, ['st_price'], coltype='float64')
 
-# Сохраняем в файл
+# Сохран в файл
 df.to_csv('../data/td_site.csv', index=False, encoding='utf-8', sep=';')

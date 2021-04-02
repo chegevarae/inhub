@@ -1,4 +1,5 @@
-/data/
+/__pycache__/
+/data/*.csv
 /notebooks/.ipynb_checkpoints/
 /notebooks/__pycache__/
 /scr/.ipynb_checkpoints/
