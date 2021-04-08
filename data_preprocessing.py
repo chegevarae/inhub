@@ -18,6 +18,9 @@ import numpy as np
 import pandas as pd
 import re
 from transliterate import translit, get_available_language_codes
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import classification_report, f1_score, accuracy_score, precision_score, recall_score
+from sklearn.model_selection import train_test_split
 
 
 class DataPreprocessor:
@@ -30,7 +33,7 @@ class DataPreprocessor:
         NUM_FEATURE     -- вещественные фичи
         CAT_FEATURE     -- категориальные фичи
 
-        >>> group_features(df, TARGET)
+        >>> dp.group_features(df, TARGET)
         '''
         try: BASE_FEATURE = df.columns.drop(TARGET).tolist()
         except: BASE_FEATURE = df.columns.tolist()
@@ -45,7 +48,7 @@ class DataPreprocessor:
         colgroup    -- список фич
         coltype     -- тип данных
 
-        >>> astype_col(df, ['colgroup'], 'coltype')
+        >>> dp.astype_col(df, ['colgroup'], 'coltype')
         '''
         for colname in colgroup:
             df[colname] = df[colname].astype(coltype)
@@ -55,7 +58,7 @@ class DataPreprocessor:
     def drop_col(self, df, colgroup):
         '''Удаление столбцов
         
-        >>> drop_col(df, colgroup)
+        >>> dp.drop_col(df, colgroup)
         '''
         for column in colgroup:
             df = df.drop(column, axis=1)  
@@ -68,7 +71,7 @@ class DataPreprocessor:
         colgroup    -- список фич
         prefix_     -- префикс для группировки фич
 
-        >>> get_translite(colgroup, 'prefix_')
+        >>> dp.get_translite(colgroup, 'prefix_')
         '''
         lst = []
         for column in colgroup:
@@ -82,10 +85,44 @@ class DataPreprocessor:
     def get_idx_col(self, colgroup):
         '''Получение имен столбцов с индексом
         
-        >>> get_idx_col(colgroup)
+        >>> dp.get_idx_col(colgroup)
         '''
         lst = []
         for index, value in enumerate(colgroup):
             print(index, value)
             lst.append(index)
         print(lst)
+
+
+    def normalization_df(self, df, colgroup):
+        '''Нормализация данных
+
+        >>> dp.normalization_df(df, NUM_FEATURE)
+        '''
+        scaler = StandardScaler()
+        df_norm = df.copy()
+        df_norm[colgroup] = scaler.fit_transform(df_norm[colgroup])
+        df = df_norm.copy()
+        return df
+
+
+    def dummies_col(self, df, colgroup):
+        '''Перевод категориальных признаков в dummies
+
+        >>> dp.dummies_col(df, CAT_FEATURE)
+        '''
+        for colname in colgroup:
+            df = pd.concat([df, pd.get_dummies(df[colname], prefix=colname)], axis=1)
+        return df
+
+
+    def time_in_seconds(self, t):
+        '''Преобразование времени в секунды
+
+        Input: "00:10:00"
+        Output: 600
+
+        >>> dp.time_in_seconds(self, t)
+        '''
+        h, m, s = [int(i) for i in t.split(':')]
+        return 3600*h + 60*m + s

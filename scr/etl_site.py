@@ -15,7 +15,7 @@ dp = DataPreprocessor()
 
 
 # Загружаем датасет
-df = pd.read_csv('../data/wp_cn_requests_price.csv')
+df = pd.read_csv('../data/wp_cn_requests_price.csv', ';')
 # Удаляем дубликаты
 df = df.drop_duplicates(subset='id_session', keep="first")
 df = df.drop_duplicates(subset='id_YM', keep="first")

@@ -2,6 +2,7 @@
 /data/*.csv
 /notebooks/.ipynb_checkpoints/
 /notebooks/__pycache__/
+/notebooks/catboost_info/
 /scr/.ipynb_checkpoints/
 /scr/__pycache__/
 config.py

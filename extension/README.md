@@ -1,5 +1,10 @@
 # Changelog
 
+## Version 1.2.1 - 08.04.2021
+
+→ Added train.ipynb  
+→ Fixed ETL-scripts  
+
 ## Version 1.2.0 - 02.04.2021
 
 → Изменена структура проекта  
