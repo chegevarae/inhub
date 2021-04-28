@@ -69,7 +69,7 @@ df['crm_client_id'] = df['crm_dopolnitelno_ob_istochnike'].apply(lambda x: get_i
 df.loc[(df['crm_client_id'].isnull()) | (df['crm_client_id'] == ''), 'crm_client_id'] = 'undefined'
 
 # Новый порядок столбцов
-new_order = [30, 0, 7, 1, 2, 3, 4, 5, 6, 13, 12, 8, 9, 10, 11, 14, 15, 28, 29, 25, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27]
+new_order = [31, 0, 7, 1, 2, 3, 4, 5, 6, 13, 12, 8, 9, 10, 11, 14, 15, 28, 29, 25, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 30]
 df = df[df.columns[new_order]]
 
 # Приведение типов
