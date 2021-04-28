@@ -33,7 +33,7 @@ columns = ['Дата рождения', 'Рабочий телефон', 'Моб
            'Почтовый индекс', 'Страна', 'Комментарий', 'Создан CRM-формой', 'Клиент', 'Путь клиента', 'Компоненты', 
            'Причина отказа сделки', 'Причина отказа сделки (список)', 'Проект', 'Конфигурация 1С', 'Наличие 1С', 
            'Причина отказа лида (список)', 'Партнерство', 'Подписан на рассылку', 'UF_CRM_TEXTAREA', 'UF_CRM_TRANID', 
-           'UF_CRM_FORMNAME', 'UF_CRM_COOKIES', 'UF_CRM_VASHESOOBSCHE', 'Отправка списка компонентов']
+           'UF_CRM_FORMNAME', 'UF_CRM_COOKIES', 'UF_CRM_VASHESOOBSCHE', 'UF_CRM_INPUT', 'Отправка списка компонентов']
 df = dp.drop_col(df, columns)
 
 # Переименование столбцов
@@ -67,10 +67,6 @@ df.loc[df['crm_istochnik_trafika'].isnull(), 'crm_istochnik_trafika'] = 'undefin
 # Получаем ClientID
 df['crm_client_id'] = df['crm_dopolnitelno_ob_istochnike'].apply(lambda x: get_id(x) if 'YA' in x else 'undefined', 1)
 df.loc[(df['crm_client_id'].isnull()) | (df['crm_client_id'] == ''), 'crm_client_id'] = 'undefined'
-
-# Новый порядок столбцов
-new_order = [31, 0, 7, 1, 2, 3, 4, 5, 6, 13, 12, 8, 9, 10, 11, 14, 15, 28, 29, 25, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 30]
-df = df[df.columns[new_order]]
 
 # Приведение типов
 df = dp.astype_col(df, ['crm_emkost_litsenzii'], coltype='uint8')
